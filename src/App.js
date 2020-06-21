@@ -1,24 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState, useEffect} from 'react';
 import './App.css';
 
+import COV from './services';
+
 function App() {
+  const [centers, setCenters] = useState([]);
+  useEffect(() => {
+    COV.getCovid()
+    .then((response) => {
+      if(!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json()
+    }).then((data) => {
+      setCenters(data.data);
+      console.log(data.data)
+    }).catch((error) => {
+      console.log(error)
+    })
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <ul>
+      {
+        centers.map((item, index) => (
+          <li key={item.id}>{item.reg_fac_name}</li>
+        ))
+      }
+      </ul>
     </div>
   );
 }
